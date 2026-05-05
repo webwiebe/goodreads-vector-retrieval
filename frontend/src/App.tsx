@@ -50,12 +50,24 @@ export default function App() {
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      const data: ChatResponse = await res.json();
+      let data: ChatResponse = await res.json();
+
+      // Safety net: if the backend leaked raw JSON into the response field, re-parse it
+      if (
+        typeof data.response === "string" &&
+        data.response.trimStart().startsWith("{") &&
+        !data.recommendations
+      ) {
+        try {
+          const reparsed = JSON.parse(data.response) as ChatResponse;
+          if (reparsed.response || reparsed.recommendations) data = reparsed;
+        } catch { /* leave as-is */ }
+      }
 
       const assistantMsg: UIMessage = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: data.response,
+        content: data.response || "Here are some recommendations for you.",
         recommendations: data.recommendations,
         sources: data.sources,
         follow_up_question: data.follow_up_question,

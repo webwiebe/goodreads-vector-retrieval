@@ -3,6 +3,7 @@ dist/
 .env
 data/goodreads_*.csv
 data/*.csv
+data/.hf_cache/
 .fastembed_cache/
 frontend/dist/
 frontend/node_modules/

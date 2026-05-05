@@ -16,11 +16,12 @@
     "@qdrant/js-client-rest": "^1.9.0",
     "adm-zip": "^0.5.16",
     "csv-parse": "^5.5.6",
-    "fastembed": "^1.14.1",
+    "@huggingface/transformers": "^4.2.0",
     "fastify": "^4.28.1",
     "openai": "^4.77.0",
     "zod": "^3.23.8"
   },
+  "trustedDependencies": ["@playwright/browser-chromium", "better-sqlite3", "esbuild", "onnxruntime-node", "protobufjs", "sharp"],
   "devDependencies": {
     "@types/adm-zip": "^0.5.7",
     "@types/bun": "^1.1.14",

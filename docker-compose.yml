@@ -7,10 +7,11 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
-      interval: 10s
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/6333' 2>/dev/null && exit 0 || exit 1"]
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 5s
 
   api:
     build:
@@ -28,7 +29,7 @@ services:
     volumes:
       - ./data:/app/data
       - fastembed_cache:/app/.fastembed_cache
-      - zip_data:/app/zip
+      - "./Goodreads Book Reviews.zip:/app/Goodreads Book Reviews.zip:ro"
     restart: unless-stopped
 
   frontend:
@@ -44,4 +45,3 @@ services:
 volumes:
   qdrant_data:
   fastembed_cache:
-  zip_data:

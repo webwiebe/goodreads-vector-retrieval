@@ -1,31 +1,42 @@
-import { EmbeddingModel, FlagEmbedding } from "fastembed";
+import { pipeline, env } from "@huggingface/transformers";
+import type { FeatureExtractionPipeline } from "@huggingface/transformers";
 import { config } from "../config.js";
 
-let instance: FlagEmbedding | null = null;
+env.cacheDir = config.dataDir + "/.hf_cache";
+env.allowLocalModels = false;
 
-export async function getEmbedder(): Promise<FlagEmbedding> {
-  if (!instance) {
-    instance = await FlagEmbedding.init({
-      model: EmbeddingModel.BGESmallENV15,
-      cacheDir: config.dataDir,
-      showDownloadProgress: false,
-    });
+const MODEL = "Xenova/bge-small-en-v1.5";
+
+let embedder: FeatureExtractionPipeline | null = null;
+
+async function getEmbedder(): Promise<FeatureExtractionPipeline> {
+  if (!embedder) {
+    console.log(`Loading embedding model ${MODEL}...`);
+    embedder = await pipeline("feature-extraction", MODEL, { dtype: "q8" });
+    console.log("Embedding model ready.");
   }
-  return instance;
+  return embedder;
 }
 
 export async function embedText(text: string): Promise<number[]> {
-  const embedder = await getEmbedder();
-  return embedder.queryEmbed(text);
+  const pipe = await getEmbedder();
+  const output = await pipe(text, { pooling: "mean", normalize: true });
+  return Array.from(output.data) as number[];
 }
 
 export async function embedTexts(texts: string[]): Promise<number[][]> {
-  const embedder = await getEmbedder();
+  const pipe = await getEmbedder();
+  const dim = config.embeddingDimension;
   const results: number[][] = [];
-  for await (const batch of embedder.embed(texts, texts.length)) {
-    for (const vec of batch) {
-      results.push(Array.from(vec));
+
+  for (let i = 0; i < texts.length; i += 32) {
+    const batch = texts.slice(i, i + 32);
+    const output = await pipe(batch, { pooling: "mean", normalize: true });
+    const data = output.data as Float32Array;
+    for (let j = 0; j < batch.length; j++) {
+      results.push(Array.from(data.slice(j * dim, (j + 1) * dim)));
     }
   }
+
   return results;
 }

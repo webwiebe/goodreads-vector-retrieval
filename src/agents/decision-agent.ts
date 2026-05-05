@@ -37,9 +37,68 @@ function buildSystemPrompt(retrievedBooks: SearchResult[]): string {
     "Pick exactly 3 books from the context above that best match the user's preferences.",
     "Explain why each book is relevant to what the user is looking for.",
     "",
-    'Output ONLY valid JSON in this exact shape, with no markdown or extra text:',
-    '{"recommendations": [{"book_title": "", "book_author": "", "reason": ""}], "response": "", "follow_up_question": ""}',
+    "Output a SINGLE JSON object. It must open with { and close with ONE }.",
+    "ALL three fields — recommendations, response, follow_up_question — must be INSIDE that same object.",
+    "No markdown, no code fences, no extra text before or after the JSON.",
+    "",
+    "Use this exact structure:",
+    JSON.stringify(
+      {
+        recommendations: [
+          { book_title: "Title Here", book_author: "Author Here", reason: "Reason here" },
+        ],
+        response: "Your conversational message to the user",
+        follow_up_question: "Optional follow-up question, or empty string",
+      },
+      null,
+      2
+    ),
   ].join("\n");
+}
+
+function extractBracketedArray(raw: string, fieldName: string): LLMRecommendation[] {
+  const fieldIdx = raw.indexOf(`"${fieldName}"`);
+  if (fieldIdx === -1) return [];
+  const arrStart = raw.indexOf("[", fieldIdx);
+  if (arrStart === -1) return [];
+  let depth = 0;
+  let arrEnd = arrStart;
+  for (let i = arrStart; i < raw.length; i++) {
+    if (raw[i] === "[") depth++;
+    else if (raw[i] === "]") {
+      depth--;
+      if (depth === 0) { arrEnd = i; break; }
+    }
+  }
+  try {
+    return JSON.parse(raw.slice(arrStart, arrEnd + 1)) as LLMRecommendation[];
+  } catch {
+    return [];
+  }
+}
+
+function parseModelOutput(raw: string): LLMOutput | null {
+  // 1. Direct parse
+  try { return JSON.parse(raw) as LLMOutput; } catch { /* continue */ }
+
+  // 2. Strip markdown code fences
+  const stripped = raw.replace(/^```[\w]*\n?/, "").replace(/\n?```$/, "").trim();
+  try { return JSON.parse(stripped) as LLMOutput; } catch { /* continue */ }
+
+  // 3. Field-by-field extraction — handles premature outer closing brace
+  const recommendations = extractBracketedArray(raw, "recommendations");
+  const respMatch = raw.match(/"response"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  const fuqMatch = raw.match(/"follow_up_question"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+
+  if (recommendations.length > 0 || respMatch) {
+    return {
+      recommendations,
+      response: respMatch ? respMatch[1] : "",
+      follow_up_question: fuqMatch ? fuqMatch[1] : undefined,
+    };
+  }
+
+  return null;
 }
 
 function findBook(retrievedBooks: SearchResult[], title: string, author: string): Book | null {
@@ -83,11 +142,9 @@ export async function recommend(
 
   const raw = completion.choices[0]?.message?.content ?? "";
 
-  let parsed: LLMOutput;
-  try {
-    parsed = JSON.parse(raw) as LLMOutput;
-  } catch {
-    return { response: raw || "I encountered an issue generating recommendations. Please try again." };
+  const parsed = parseModelOutput(raw);
+  if (!parsed) {
+    return { response: "I had trouble formatting my response. Please try asking again." };
   }
 
   const recommendations = (parsed.recommendations ?? [])

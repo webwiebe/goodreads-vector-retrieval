@@ -1,0 +1,38 @@
+description: "RAG vs no-RAG book recommendation comparison"
+
+providers:
+  - id: rag-agent
+    label: "With Vector Search"
+    type: http
+    config:
+      url: http://localhost:3000/api/chat
+      method: POST
+      headers:
+        Content-Type: application/json
+      body:
+        messages: "{{messages}}"
+        useRag: true
+
+  - id: no-rag-agent
+    label: "Without Vector Search (pure LLM)"
+    type: http
+    config:
+      url: http://localhost:3000/api/chat
+      method: POST
+      headers:
+        Content-Type: application/json
+      body:
+        messages: "{{messages}}"
+        useRag: false
+
+tests: file://test-cases.yaml
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: "The response recommends specific books with clear reasons related to the user's stated preferences"
+      threshold: 0.7
+    - type: javascript
+      value: |
+        const parsed = JSON.parse(output);
+        return typeof parsed.response === 'string' && parsed.response.length > 0;

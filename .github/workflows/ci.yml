@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install
+
+      - name: Type check
+        run: bunx tsc --noEmit
+
+      - name: Lint
+        run: bunx eslint src/ --ext .ts
+
+      - name: Test
+        run: bun test
+        env:
+          OPENROUTER_API_KEY: "test-key-not-used-in-unit-tests"
+          QDRANT_URL: "http://localhost:6333"
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install
+
+      - name: Type check
+        run: bun run lint
+
+      - name: Build
+        run: bun run build

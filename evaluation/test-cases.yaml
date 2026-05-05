@@ -1,0 +1,179 @@
+- vars:
+    messages:
+      - role: user
+        content: "I love cozy mysteries with cats and British settings"
+  assert:
+    - type: llm-rubric
+      value: "Recommends mystery books, ideally with cozy or British themes"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "No romance, only hard sci-fi with rigorous science and no fantasy elements"
+  assert:
+    - type: llm-rubric
+      value: "Recommends hard science fiction books and explicitly avoids romance subplots"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "I want books similar to Neil Gaiman's style — mythic, dark fairy tales for adults"
+  assert:
+    - type: llm-rubric
+      value: "Recommends books with a mythological or dark fairy-tale quality comparable to Neil Gaiman"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Something uplifting and heartwarming after a really hard week"
+  assert:
+    - type: llm-rubric
+      value: "Recommends feel-good, uplifting books and acknowledges the emotional request"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Victorian era literary fiction, preferably by women authors"
+  assert:
+    - type: llm-rubric
+      value: "Recommends literary fiction set in or written during the Victorian era"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Young adult fantasy with a strong female protagonist who isn't defined by a love interest"
+  assert:
+    - type: llm-rubric
+      value: "Recommends YA fantasy featuring a prominent, independent female lead"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Popular science books accessible to non-scientists, like Sapiens or A Brief History of Time"
+  assert:
+    - type: llm-rubric
+      value: "Recommends accessible non-fiction popular science books"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Modern retellings of classic Greek or Roman myths"
+  assert:
+    - type: llm-rubric
+      value: "Recommends contemporary retellings or adaptations of classical mythology"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Accessible introductory books about philosophy for someone with no academic background"
+  assert:
+    - type: llm-rubric
+      value: "Recommends beginner-friendly philosophy books that require no prior knowledge"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Psychological thriller with an unreliable narrator and a twist ending"
+  assert:
+    - type: llm-rubric
+      value: "Recommends psychological thriller or suspense novels known for unreliable narration"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Epic high fantasy series longer than five books — I want to get completely lost in a world"
+  assert:
+    - type: llm-rubric
+      value: "Recommends long-running high fantasy series with rich world-building"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Short story collections, preferably speculative fiction or magical realism"
+  assert:
+    - type: llm-rubric
+      value: "Recommends short story anthologies in the speculative fiction or magical realism genre"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Historical fiction set during World War II from a non-American perspective"
+  assert:
+    - type: llm-rubric
+      value: "Recommends WWII historical fiction with a non-American viewpoint"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Books about climate change or environmentalism that aren't preachy"
+  assert:
+    - type: llm-rubric
+      value: "Recommends books on environmental themes that are narrative-driven rather than didactic"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Literary fiction that deals with grief and loss but still feels hopeful"
+  assert:
+    - type: llm-rubric
+      value: "Recommends literary fiction dealing with grief that carries an undertone of hope"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Manga or graphic novels suitable for adults — dark themes are fine"
+  assert:
+    - type: llm-rubric
+      value: "Recommends mature graphic novels or manga appropriate for adult readers"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Debut novels from the last five years that won major awards"
+  assert:
+    - type: llm-rubric
+      value: "Recommends recent debut novels that received critical acclaim or award recognition"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "True crime books that focus on the systemic failures rather than sensationalising the crime"
+  assert:
+    - type: llm-rubric
+      value: "Recommends true crime books that take a critical, systemic perspective"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Books set in Japan — fiction or non-fiction, I just want to feel transported there"
+  assert:
+    - type: llm-rubric
+      value: "Recommends books with a strong Japanese setting or cultural connection"
+      threshold: 0.6
+
+- vars:
+    messages:
+      - role: user
+        content: "Fast-paced action-adventure with diverse characters and a female author"
+  assert:
+    - type: llm-rubric
+      value: "Recommends action-adventure novels with diverse representation written by a woman"
+      threshold: 0.6

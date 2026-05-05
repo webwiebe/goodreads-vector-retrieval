@@ -1,0 +1,35 @@
+{
+  "name": "goodreads-vector-retrieval",
+  "version": "0.1.0",
+  "description": "Open-source RAG pipeline example: Goodreads dataset + Qdrant + OpenRouter LLMs with LLM evaluation",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/api/server.ts",
+    "start": "bun src/api/server.ts",
+    "test": "bun test",
+    "lint": "eslint src/ --ext .ts && tsc --noEmit",
+    "format": "prettier --write src/ frontend/src/",
+    "eval": "bunx promptfoo eval --config evaluation/promptfoo.yaml"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "@qdrant/js-client-rest": "^1.9.0",
+    "adm-zip": "^0.5.16",
+    "csv-parse": "^5.5.6",
+    "fastembed": "^1.14.1",
+    "fastify": "^4.28.1",
+    "openai": "^4.77.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.7",
+    "@types/bun": "^1.1.14",
+    "@types/node": "^20.17.10",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.1",
+    "prettier": "^3.4.2",
+    "promptfoo": "^0.103.3",
+    "typescript": "^5.7.2"
+  }
+}

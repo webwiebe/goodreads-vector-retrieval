@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Chat } from "../components/Chat";
 import { apiFetch } from "../lib/session";
+import { saveChatMessages, loadChatMessages, clearChatHistory } from "../lib/chat-store";
 import type { ChatMessage, UIMessage, HealthStatus, ChatResponse, GenreSummary } from "../types";
 import "./pages.css";
 import "../App.css";
@@ -37,11 +38,15 @@ function GenreCoverThumb({ url, title }: { url: string; title: string }) {
 }
 
 export function HomePage({ useRag, health: _health, healthError: _healthError, language = "any" }: Props) {
-  const [messages, setMessages] = useState<UIMessage[]>([]);
+  const [messages, setMessages] = useState<UIMessage[]>(() => loadChatMessages());
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [genres, setGenres] = useState<GenreSummary[]>([]);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    saveChatMessages(messages);
+  }, [messages]);
 
   useEffect(() => {
     apiFetch("/api/genres?limit=6")
@@ -228,7 +233,21 @@ export function HomePage({ useRag, health: _health, healthError: _healthError, l
             )}
           </button>
         </div>
-        <p className="input-hint">Enter to send · Shift+Enter for new line</p>
+        <div className="input-hint-row">
+          <p className="input-hint">Enter to send · Shift+Enter for new line</p>
+          {messages.length > 0 && (
+            <button
+              className="new-chat-btn"
+              onClick={() => {
+                setMessages([]);
+                clearChatHistory();
+                setInput("");
+              }}
+            >
+              New conversation
+            </button>
+          )}
+        </div>
       </footer>
     </div>
   );

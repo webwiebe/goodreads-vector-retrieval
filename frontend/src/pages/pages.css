@@ -850,3 +850,43 @@
   .nav-links { gap: 0; }
   .nav-link { padding: 6px 8px; font-size: 0.8125rem; }
 }
+
+/* Back-to-conversation breadcrumb button */
+.breadcrumb-back-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
+  color: #f59e0b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.15s;
+}
+.breadcrumb-back-btn:hover { opacity: 0.75; }
+
+/* New conversation + hint row in chat footer */
+.input-hint-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+  min-height: 20px;
+}
+.new-chat-btn {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: #475569;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+  font-family: inherit;
+}
+.new-chat-btn:hover {
+  color: #94a3b8;
+  background: rgba(255,255,255,0.04);
+}

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { BookCard } from "../components/BookCard";
 import { StarRating } from "../components/StarRating";
 import { apiFetch } from "../lib/session";
+import { hasChatHistory } from "../lib/chat-store";
 import type { BookDetail } from "../types";
 import "./pages.css";
 
@@ -57,9 +58,11 @@ function BookCover({ url, title, size = "large" }: { url: string; title: string;
 
 export function BookDetailPage() {
   const { workId } = useParams<{ workId: string }>();
+  const navigate = useNavigate();
   const [data, setData] = useState<BookDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [showBackToChat] = useState(() => hasChatHistory());
 
   useEffect(() => {
     if (!workId) return;
@@ -118,7 +121,13 @@ export function BookDetailPage() {
   return (
     <div className="page">
       <nav className="breadcrumb">
-        <Link to="/">Home</Link>
+        {showBackToChat ? (
+          <button className="breadcrumb-back-btn" onClick={() => navigate(-1)}>
+            ← Back to conversation
+          </button>
+        ) : (
+          <Link to="/">Home</Link>
+        )}
         <span className="breadcrumb-sep">›</span>
         <span className="breadcrumb-current">{book.title}</span>
       </nav>

@@ -7,6 +7,8 @@ import { GenreDetailPage } from "./pages/GenreDetailPage";
 import { BookDetailPage } from "./pages/BookDetailPage";
 import { AuthorDetailPage } from "./pages/AuthorDetailPage";
 import { DocsPage } from "./pages/DocsPage";
+import { LogPanel } from "./components/LogPanel";
+import { apiFetch } from "./lib/session";
 import type { HealthStatus } from "./types";
 import "./App.css";
 
@@ -17,7 +19,7 @@ export default function App() {
   const [language, setLanguage] = useState("any");
 
   useEffect(() => {
-    fetch("/api/health")
+    apiFetch("/api/health")
       .then((r) => r.json())
       .then((data: HealthStatus) => {
         setHealth(data);
@@ -44,6 +46,7 @@ export default function App() {
         <Route path="/docs" element={<DocsPage />} />
         <Route path="/docs/:name" element={<DocsPage />} />
       </Routes>
+      <LogPanel />
     </BrowserRouter>
   );
 }

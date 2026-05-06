@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { apiFetch } from "../lib/session";
 import type { GenreSummary } from "../types";
 import "./pages.css";
 
@@ -48,7 +49,7 @@ export function GenresPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/genres?limit=50")
+    apiFetch("/api/genres?limit=50")
       .then((r) => r.json())
       .then((data: { genres: GenreSummary[] }) => {
         setGenres(data.genres ?? []);

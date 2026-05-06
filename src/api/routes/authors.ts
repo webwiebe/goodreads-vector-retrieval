@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { getBooksByAuthor, getBookWithVector, searchBooks } from "../../rag/vector-store.js";
+import { sessionLog } from "../../lib/session-logger.js";
 import type { Book } from "../../types/index.js";
 
 function averageVectors(vectors: number[][]): number[] {
@@ -18,6 +19,7 @@ export async function authorRoutes(fastify: FastifyInstance): Promise<void> {
   fastify.get("/authors/:name", async (request, reply) => {
     const { name } = request.params as { name: string };
     const authorName = decodeURIComponent(name);
+    const sessionId = request.headers["x-session-id"] as string | undefined;
 
     try {
       const books = await getBooksByAuthor(authorName);
@@ -37,6 +39,7 @@ export async function authorRoutes(fastify: FastifyInstance): Promise<void> {
 
       if (vectors.length > 0) {
         const avgVector = averageVectors(vectors);
+        const t0 = Date.now();
         const searchResults = await searchBooks(avgVector, 30);
         const seen = new Set<string>();
 
@@ -46,6 +49,16 @@ export async function authorRoutes(fastify: FastifyInstance): Promise<void> {
           seen.add(candidate);
           similarAuthors.push({ author: candidate, sampleBook: result.book });
           if (similarAuthors.length >= 5) break;
+        }
+
+        if (sessionId) {
+          sessionLog(sessionId, "vector-query", {
+            query: `author avg: ${authorName}`,
+            topK: 13,
+            durationMs: Date.now() - t0,
+            resultCount: similarAuthors.length,
+            topResults: similarAuthors.slice(0, 3).map((a) => ({ title: a.sampleBook.title, author: a.author })),
+          });
         }
       }
 

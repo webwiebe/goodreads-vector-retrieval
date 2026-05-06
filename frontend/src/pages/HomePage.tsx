@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Chat } from "../components/Chat";
+import { apiFetch } from "../lib/session";
 import type { ChatMessage, UIMessage, HealthStatus, ChatResponse, GenreSummary } from "../types";
 import "./pages.css";
 import "../App.css";
@@ -43,7 +44,7 @@ export function HomePage({ useRag, health: _health, healthError: _healthError, l
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    fetch("/api/genres?limit=6")
+    apiFetch("/api/genres?limit=6")
       .then((r) => r.json())
       .then((data: { genres: GenreSummary[] }) => setGenres(data.genres ?? []))
       .catch(() => {});
@@ -69,7 +70,7 @@ export function HomePage({ useRag, health: _health, healthError: _healthError, l
     ];
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await apiFetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: history, useRag, language: language !== "any" ? language : undefined }),

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { BookCard } from "../components/BookCard";
 import { StarRating } from "../components/StarRating";
+import { apiFetch } from "../lib/session";
 import type { BookDetail } from "../types";
 import "./pages.css";
 
@@ -64,7 +65,7 @@ export function BookDetailPage() {
     if (!workId) return;
     setLoading(true);
     setNotFound(false);
-    fetch(`/api/books/${workId}`)
+    apiFetch(`/api/books/${workId}`)
       .then((r) => {
         if (r.status === 404) { setNotFound(true); return null; }
         if (!r.ok) throw new Error(`HTTP ${r.status}`);

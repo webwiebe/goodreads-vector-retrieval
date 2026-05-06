@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { BookCard } from "../components/BookCard";
+import { apiFetch } from "../lib/session";
 import type { Book } from "../types";
 import "./pages.css";
 
@@ -26,7 +27,7 @@ export function GenreDetailPage() {
     if (!genre) return;
     setLoading(true);
     setError(null);
-    fetch(`/api/genres/${encodeURIComponent(decodedGenre)}/top?limit=20`)
+    apiFetch(`/api/genres/${encodeURIComponent(decodedGenre)}/top?limit=20`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();

@@ -35,8 +35,10 @@ export async function chatRoutes(fastify: FastifyInstance): Promise<void> {
       }
     }
 
+    const sessionId = request.headers["x-session-id"] as string | undefined;
+
     try {
-      const response = await chat({ messages: effectiveMessages, useRag });
+      const response = await chat({ messages: effectiveMessages, useRag }, sessionId);
       return reply.send(response);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Internal server error";

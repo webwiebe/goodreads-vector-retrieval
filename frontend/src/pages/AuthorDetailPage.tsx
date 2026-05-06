@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { BookCard } from "../components/BookCard";
+import { apiFetch } from "../lib/session";
 import type { AuthorDetail } from "../types";
 import "./pages.css";
 
@@ -47,7 +48,7 @@ export function AuthorDetailPage() {
     if (!authorName) return;
     setLoading(true);
     setNotFound(false);
-    fetch(`/api/authors/${encodeURIComponent(decodedName)}`)
+    apiFetch(`/api/authors/${encodeURIComponent(decodedName)}`)
       .then((r) => {
         if (r.status === 404) { setNotFound(true); return null; }
         if (!r.ok) throw new Error(`HTTP ${r.status}`);

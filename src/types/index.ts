@@ -73,3 +73,5 @@ export interface DocContent {
   title: string;
   content: string;
 }
+
+export type { LogEntryType, LogEntry } from "../lib/session-logger.js";

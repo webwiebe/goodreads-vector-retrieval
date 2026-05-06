@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { apiFetch } from "../lib/session";
 import type { DocMeta, DocContent } from "../types";
 import "./pages.css";
 
@@ -15,7 +16,7 @@ export function DocsPage() {
   const [loadingContent, setLoadingContent] = useState(false);
 
   useEffect(() => {
-    fetch("/api/docs")
+    apiFetch("/api/docs")
       .then((r) => r.json())
       .then((data: { docs: DocMeta[] }) => {
         setDocs(data.docs ?? []);
@@ -30,7 +31,7 @@ export function DocsPage() {
       return;
     }
     setLoadingContent(true);
-    fetch(`/api/docs/${name}`)
+    apiFetch(`/api/docs/${name}`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();

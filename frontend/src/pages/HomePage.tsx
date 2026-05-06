@@ -98,6 +98,7 @@ export function HomePage({ useRag, health: _health, healthError: _healthError, l
         recommendations: data.recommendations,
         sources: data.sources,
         follow_up_question: data.follow_up_question,
+        useRag: data.useRag,
       };
 
       setMessages((prev) => [...prev, assistantMsg]);

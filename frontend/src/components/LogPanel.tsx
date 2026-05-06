@@ -109,7 +109,13 @@ function LogEntryRow({ entry }: LogEntryProps) {
 
   if (type === "vector-query") {
     const topResults = Array.isArray(data.topResults) ? data.topResults as Array<Record<string, unknown>> : [];
+    const dist = data.scoreDistribution as { max?: number; min?: number; mean?: number; p75?: number } | undefined;
+    const semanticOnly = typeof data.semanticOnlyCount === "number" ? data.semanticOnlyCount : null;
+    const keywordMatches = typeof data.keywordMatchCount === "number" ? data.keywordMatchCount : null;
+    const totalResults = typeof data.resultCount === "number" ? data.resultCount : 0;
     const hasExpand = topResults.length > 0;
+    const scoreMax = dist?.max ?? 1;
+    const scoreMin = dist?.min ?? 0;
     return (
       <div
         className={`log-entry log-entry--vector-query${hasExpand ? " log-entry--expandable" : ""}`}
@@ -119,21 +125,76 @@ function LogEntryRow({ entry }: LogEntryProps) {
         <div className="log-entry__content">
           <div className="log-entry__header">
             <span className="log-entry__title">Vector search</span>
+            {!!data.embeddingModel && (
+              <span className="log-entry__badge log-entry__badge--dim">
+                {String(data.embeddingDimensions ?? 384)}d
+              </span>
+            )}
             <span className="log-entry__time">{time}</span>
           </div>
           <div className="log-entry__body">
-            &ldquo;{String(data.query ?? "")}&rdquo; &rarr; {String(data.resultCount ?? 0)} results
-            {data.durationMs !== undefined ? ` (${String(data.durationMs)}ms)` : ""}
+            &ldquo;{String(data.query ?? "")}&rdquo; &rarr; {totalResults} results ({String(data.durationMs ?? 0)}ms)
           </div>
+
+          {dist && (
+            <div className="log-entry__scores">
+              <div className="log-entry__score-bar-wrap">
+                <span className="log-entry__score-label">score</span>
+                <div className="log-entry__score-track">
+                  <div
+                    className="log-entry__score-fill"
+                    style={{ left: `${scoreMin * 100}%`, width: `${(scoreMax - scoreMin) * 100}%` }}
+                  />
+                  {dist.mean !== undefined && (
+                    <div className="log-entry__score-mean" style={{ left: `${dist.mean * 100}%` }} title={`mean ${dist.mean}`} />
+                  )}
+                </div>
+                <span className="log-entry__score-range">{scoreMin.toFixed(2)}–{scoreMax.toFixed(2)}</span>
+              </div>
+            </div>
+          )}
+
+          {semanticOnly !== null && keywordMatches !== null && (
+            <div className="log-entry__semantic">
+              <span className="log-entry__semantic-pill log-entry__semantic-pill--semantic">
+                {semanticOnly} semantic-only
+              </span>
+              {keywordMatches > 0 && (
+                <span className="log-entry__semantic-pill log-entry__semantic-pill--keyword">
+                  {keywordMatches} keyword match
+                </span>
+              )}
+              {semanticOnly > 0 && (
+                <span className="log-entry__semantic-note">
+                  ↑ found without matching the query words
+                </span>
+              )}
+            </div>
+          )}
+
           {hasExpand && (
             <div className={`log-entry__expand${expanded ? " log-entry__expand--open" : ""}`}>
               <div className="log-entry__results">
                 {topResults.map((r, i) => (
                   <div key={i} className="log-entry__result-item">
-                    <span>{String(r.title ?? r.id ?? i)}</span>
-                    <span className="log-entry__result-score">{typeof r.score === "number" ? r.score.toFixed(3) : String(r.score ?? "")}</span>
+                    <div className="log-entry__result-meta">
+                      {r.matchedByKeyword ? (
+                        <span className="log-entry__kw-dot log-entry__kw-dot--match" title="title contains query word" />
+                      ) : (
+                        <span className="log-entry__kw-dot log-entry__kw-dot--semantic" title="found semantically" />
+                      )}
+                      <span className="log-entry__result-title">{String(r.title ?? i)}</span>
+                    </div>
+                    <div className="log-entry__result-right">
+                      {!!r.genres && <span className="log-entry__result-genres">{String(r.genres)}</span>}
+                      <span className="log-entry__result-score">{typeof r.score === "number" ? r.score.toFixed(3) : ""}</span>
+                    </div>
                   </div>
                 ))}
+              </div>
+              <div className="log-entry__legend">
+                <span className="log-entry__kw-dot log-entry__kw-dot--match" /> keyword match &nbsp;
+                <span className="log-entry__kw-dot log-entry__kw-dot--semantic" /> semantic only
               </div>
             </div>
           )}
@@ -177,6 +238,11 @@ function LogEntryRow({ entry }: LogEntryProps) {
           </div>
           <div className="log-entry__body">
             {String(data.recommendationCount ?? 0)} recommendations in {String(data.durationMs ?? 0)}ms
+            {typeof data.unverifiedCount === "number" && data.unverifiedCount > 0 && (
+              <span className="log-entry__unverified" style={{ marginLeft: 6 }}>
+                {data.unverifiedCount} unverified
+              </span>
+            )}
           </div>
           {usage && (
             <div className="log-entry__tokens">
@@ -218,7 +284,7 @@ function HowItWorks() {
             <span className="log-howit__node-sub">cosine · 384 dims</span>
           </div>
         </div>
-        <div className="log-howit__arrow">↓ top-10 books</div>
+        <div className="log-howit__arrow">↓ top-20 candidates</div>
         <div className="log-howit__step">
           <div className="log-howit__node">
             <span className="log-howit__badge log-howit__badge--amber">4</span>

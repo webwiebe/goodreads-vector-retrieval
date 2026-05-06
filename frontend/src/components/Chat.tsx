@@ -1,7 +1,29 @@
 import { useEffect, useRef } from "react";
-import type { UIMessage } from "../types";
+import type { UIMessage, Recommendation } from "../types";
 import { BookCard } from "./BookCard";
 import "./Chat.css";
+
+function NoRagWarning({ recommendations, useRag }: { recommendations?: Recommendation[]; useRag?: boolean }) {
+  if (useRag !== false) return null;
+  const unverified = (recommendations ?? []).filter((r) => r.verified === false);
+  if (unverified.length === 0) return null;
+  return (
+    <div className="no-rag-warning">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 2 }}>
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+      <div>
+        <strong>{unverified.length} of {recommendations!.length} books could not be verified</strong> in our Goodreads dataset — the AI may have hallucinated {unverified.length === 1 ? "it" : "them"}.
+        <br />
+        <span className="no-rag-warning__tip">
+          Enable <strong>Vector Search</strong> in the nav bar to get recommendations grounded in real books from the database.
+        </span>
+      </div>
+    </div>
+  );
+}
 
 interface Props {
   messages: UIMessage[];
@@ -110,12 +132,16 @@ export function Chat({ messages, loading, onFollowUp, language = "any" }: Props)
                   <p className="recommendations__label">
                     {msg.recommendations.length} recommendation
                     {msg.recommendations.length !== 1 ? "s" : ""}
+                    {msg.useRag === false && (
+                      <span className="recommendations__label-badge">no vector search</span>
+                    )}
                   </p>
                   <div className="recommendations__grid">
                     {msg.recommendations.map((rec) => (
-                      <BookCard key={rec.book.work_id} recommendation={rec} />
+                      <BookCard key={rec.book.work_id || rec.book.title} recommendation={rec} />
                     ))}
                   </div>
+                  <NoRagWarning recommendations={msg.recommendations} useRag={msg.useRag} />
                 </div>
               )}
 

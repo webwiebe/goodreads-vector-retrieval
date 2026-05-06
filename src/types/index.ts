@@ -19,6 +19,7 @@ export interface ChatMessage {
 export interface Recommendation {
   book: Book;
   reason: string;
+  verified?: boolean;
 }
 
 export interface ChatResponse {
@@ -26,6 +27,7 @@ export interface ChatResponse {
   recommendations?: Recommendation[];
   sources?: Book[];
   follow_up_question?: string;
+  useRag?: boolean;
 }
 
 export interface ChatRequest {

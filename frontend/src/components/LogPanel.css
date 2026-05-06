@@ -382,3 +382,39 @@
   color: #94a3b8;
   line-height: 1.5;
 }
+
+/* Score distribution bar */
+.log-entry__scores { margin-top: 6px; }
+.log-entry__score-bar-wrap { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #64748b; }
+.log-entry__score-label { flex-shrink: 0; }
+.log-entry__score-track { position: relative; flex: 1; height: 4px; background: #1e293b; border-radius: 2px; overflow: visible; }
+.log-entry__score-fill { position: absolute; top: 0; bottom: 0; background: #3b82f6; border-radius: 2px; }
+.log-entry__score-mean { position: absolute; top: -2px; bottom: -2px; width: 2px; background: #f59e0b; border-radius: 1px; transform: translateX(-50%); }
+.log-entry__score-range { flex-shrink: 0; font-variant-numeric: tabular-nums; }
+
+/* Semantic / keyword pills */
+.log-entry__semantic { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 5px; }
+.log-entry__semantic-pill { font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 3px; }
+.log-entry__semantic-pill--semantic { background: rgba(59,130,246,0.15); color: #93c5fd; }
+.log-entry__semantic-pill--keyword { background: rgba(34,197,94,0.12); color: #86efac; }
+.log-entry__semantic-note { font-size: 10px; color: #475569; font-style: italic; }
+
+/* Result rows */
+.log-entry__result-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.log-entry__result-item:last-child { border-bottom: none; }
+.log-entry__result-meta { display: flex; align-items: center; gap: 5px; min-width: 0; }
+.log-entry__result-title { font-size: 11px; color: #cbd5e1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.log-entry__result-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.log-entry__result-genres { font-size: 10px; color: #475569; }
+.log-entry__result-score { font-size: 10px; font-variant-numeric: tabular-nums; color: #64748b; }
+
+/* Keyword indicator dots */
+.log-entry__kw-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.log-entry__kw-dot--match { background: #22c55e; }
+.log-entry__kw-dot--semantic { background: #3b82f6; }
+
+/* Legend */
+.log-entry__legend { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 10px; color: #475569; }
+
+/* unverified badge on llm-response */
+.log-entry__unverified { font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 3px; background: rgba(245,158,11,0.15); color: #f59e0b; }

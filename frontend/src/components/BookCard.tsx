@@ -85,6 +85,11 @@ export function BookCard({ recommendation, book: bookProp, showReason = true }: 
       <div className="book-card__body">
         <h3 className="book-card__title" title={book.title}>
           {book.title}
+          {recommendation?.verified === false && (
+            <span className="book-card__unverified" title="This book could not be verified in our dataset — it may be hallucinated by the AI">
+              ⚠ unverified
+            </span>
+          )}
         </h3>
         <p className="book-card__author">{book.author}</p>
 

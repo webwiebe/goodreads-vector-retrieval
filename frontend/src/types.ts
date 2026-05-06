@@ -14,6 +14,7 @@ export interface Book {
 export interface Recommendation {
   book: Book;
   reason: string;
+  verified?: boolean;
 }
 
 export interface ChatMessage {
@@ -26,6 +27,7 @@ export interface ChatResponse {
   recommendations?: Recommendation[];
   sources?: Book[];
   follow_up_question?: string;
+  useRag?: boolean;
 }
 
 export interface HealthStatus {
@@ -42,6 +44,7 @@ export interface UIMessage {
   recommendations?: Recommendation[];
   sources?: Book[];
   follow_up_question?: string;
+  useRag?: boolean;
 }
 
 export interface GenreSummary {

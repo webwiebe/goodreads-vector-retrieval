@@ -50,9 +50,9 @@ describe("searchMemory", () => {
     expect(mockSearchBooks).toHaveBeenCalledWith(FAKE_VECTOR, 5);
   });
 
-  it("uses topK default of 10 when not provided", async () => {
+  it("uses topK default of 20 when not provided", async () => {
     await searchMemory("mystery");
-    expect(mockSearchBooks).toHaveBeenCalledWith(FAKE_VECTOR, 10);
+    expect(mockSearchBooks).toHaveBeenCalledWith(FAKE_VECTOR, 20);
   });
 
   it("filters out results with score <= 0.3", async () => {

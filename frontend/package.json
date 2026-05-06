@@ -9,9 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@huggingface/transformers": "^4.2.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.0",
+    "react-markdown": "^9.0.1",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",
@@ -19,9 +21,5 @@
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
     "@vitejs/plugin-react": "^4.3.4"
-  },
-  "trustedDependencies": [
-    "onnxruntime-node",
-    "protobufjs"
-  ]
+  }
 }

@@ -1,10 +1,11 @@
 import { useState } from "react";
-import type { Recommendation } from "../types";
+import { useNavigate } from "react-router-dom";
+import type { Book, Recommendation } from "../types";
 import "./BookCard.css";
 
-interface Props {
-  recommendation: Recommendation;
-}
+type Props =
+  | { recommendation: Recommendation; book?: never; showReason?: boolean }
+  | { book: Book; recommendation?: never; showReason?: boolean };
 
 function StarRating({ rating }: { rating: number }) {
   const full = Math.floor(rating);
@@ -25,9 +26,11 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-export function BookCard({ recommendation }: Props) {
-  const { book, reason } = recommendation;
+export function BookCard({ recommendation, book: bookProp, showReason = true }: Props) {
+  const book = recommendation ? recommendation.book : bookProp!;
+  const reason = recommendation?.reason;
   const [imgError, setImgError] = useState(false);
+  const navigate = useNavigate();
 
   const genres = book.genres
     ? book.genres.split(",").map((g) => g.trim()).filter(Boolean).slice(0, 3)
@@ -36,7 +39,18 @@ export function BookCard({ recommendation }: Props) {
   const hasImage = book.image_url && !imgError;
 
   return (
-    <article className="book-card">
+    <article
+      className="book-card"
+      onClick={() => navigate(`/books/${book.work_id}`)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          navigate(`/books/${book.work_id}`);
+        }
+      }}
+    >
       <div className="book-card__cover">
         {hasImage ? (
           <img
@@ -86,7 +100,7 @@ export function BookCard({ recommendation }: Props) {
           </div>
         )}
 
-        <p className="book-card__reason">{reason}</p>
+        {showReason && reason && <p className="book-card__reason">{reason}</p>}
       </div>
     </article>
   );

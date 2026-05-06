@@ -30,7 +30,7 @@ export interface ChatResponse {
 
 export interface HealthStatus {
   status: string;
-  qdrant: string;
+  qdrant: boolean;
   ingestionComplete: boolean;
   indexedBooks: number;
 }
@@ -42,4 +42,32 @@ export interface UIMessage {
   recommendations?: Recommendation[];
   sources?: Book[];
   follow_up_question?: string;
+}
+
+export interface GenreSummary {
+  name: string;
+  count: number;
+  topBooks: Book[];
+}
+
+export interface BookDetail {
+  book: Book;
+  similar: Book[];
+}
+
+export interface AuthorDetail {
+  author: string;
+  books: Book[];
+  similarAuthors: { author: string; sampleBook: Book }[];
+}
+
+export interface DocMeta {
+  name: string;
+  title: string;
+}
+
+export interface DocContent {
+  name: string;
+  title: string;
+  content: string;
 }

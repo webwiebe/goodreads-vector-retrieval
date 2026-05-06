@@ -74,3 +74,80 @@ export async function getCollectionCount(): Promise<number> {
     return 0;
   }
 }
+
+export async function getBookWithVector(workId: string): Promise<{ book: Book; vector: number[] } | null> {
+  const qdrant = await getQdrantClient();
+  const results = await qdrant.retrieve(config.qdrantCollectionBooks, {
+    ids: [pointId(workId)],
+    with_vector: true,
+    with_payload: true,
+  });
+  const hit = results[0];
+  if (!hit) return null;
+  const vector = Array.isArray(hit.vector) ? (hit.vector as number[]) : null;
+  if (!vector) return null;
+  return { book: hit.payload as unknown as Book, vector };
+}
+
+type ScrollOffset = number | string | null | undefined;
+
+function nextOffset(raw: unknown): ScrollOffset {
+  if (raw === null || raw === undefined) return raw as null | undefined;
+  if (typeof raw === "number" || typeof raw === "string") return raw;
+  return undefined;
+}
+
+export async function scrollAllBooks(): Promise<Book[]> {
+  const qdrant = await getQdrantClient();
+  const books: Book[] = [];
+  let offset: ScrollOffset = undefined;
+
+  while (true) {
+    const response = await qdrant.scroll(config.qdrantCollectionBooks, {
+      limit: 250,
+      with_payload: true,
+      with_vector: false,
+      ...(offset !== undefined ? { offset } : {}),
+    });
+
+    for (const point of response.points) {
+      if (point.payload) {
+        books.push(point.payload as unknown as Book);
+      }
+    }
+
+    offset = nextOffset(response.next_page_offset);
+    if (offset === null || offset === undefined) break;
+  }
+
+  return books;
+}
+
+export async function getBooksByAuthor(authorName: string): Promise<Book[]> {
+  const qdrant = await getQdrantClient();
+  const books: Book[] = [];
+  let offset: ScrollOffset = undefined;
+
+  while (true) {
+    const response = await qdrant.scroll(config.qdrantCollectionBooks, {
+      filter: {
+        must: [{ key: "author", match: { value: authorName } }],
+      },
+      limit: 100,
+      with_payload: true,
+      with_vector: false,
+      ...(offset !== undefined ? { offset } : {}),
+    });
+
+    for (const point of response.points) {
+      if (point.payload) {
+        books.push(point.payload as unknown as Book);
+      }
+    }
+
+    offset = nextOffset(response.next_page_offset);
+    if (offset === null || offset === undefined) break;
+  }
+
+  return books;
+}

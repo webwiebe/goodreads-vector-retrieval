@@ -7,9 +7,10 @@ interface Props {
   messages: UIMessage[];
   loading: boolean;
   onFollowUp: (question: string) => void;
+  language?: string;
 }
 
-export function Chat({ messages, loading, onFollowUp }: Props) {
+export function Chat({ messages, loading, onFollowUp, language = "any" }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -59,6 +60,12 @@ export function Chat({ messages, loading, onFollowUp }: Props) {
               </button>
             ))}
           </div>
+
+          {language && language !== "any" && (
+            <div className="chat-welcome__lang-pill">
+              Filtering for: <strong>{language}</strong> language books
+            </div>
+          )}
         </div>
       </div>
     );

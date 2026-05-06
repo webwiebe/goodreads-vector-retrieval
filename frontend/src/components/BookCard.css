@@ -6,12 +6,15 @@
   display: flex;
   flex-direction: column;
   transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+  cursor: pointer;
+  outline: none;
 }
 
-.book-card:hover {
-  border-color: var(--border-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card);
+.book-card:hover,
+.book-card:focus-visible {
+  border-color: rgba(245, 158, 11, 0.45);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card), 0 0 0 1px rgba(245, 158, 11, 0.15);
 }
 
 /* ── Cover ── */

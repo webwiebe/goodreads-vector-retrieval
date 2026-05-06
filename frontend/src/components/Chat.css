@@ -50,6 +50,21 @@
   justify-content: center;
 }
 
+.chat-welcome__lang-pill {
+  display: inline-block;
+  margin-top: 16px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--gold-400);
+  font-size: 0.8rem;
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+
+.chat-welcome__lang-pill strong {
+  font-weight: 600;
+}
+
 .suggestion-chip {
   background: var(--navy-700);
   border: 1px solid var(--border);

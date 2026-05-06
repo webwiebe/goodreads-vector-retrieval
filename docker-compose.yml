@@ -28,6 +28,7 @@ services:
         condition: service_healthy
     volumes:
       - ./data:/app/data
+      - ./docs:/app/docs:ro
       - fastembed_cache:/app/.fastembed_cache
       - "./Goodreads Book Reviews.zip:/app/Goodreads Book Reviews.zip:ro"
     restart: unless-stopped
